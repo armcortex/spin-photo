@@ -12,21 +12,34 @@ CROP_SIZE = 10 // RATIO
 ROTATE_OFFSET = 0
 
 
-def combine_gifs(gif_paths, output_path, matrix=[]):
+def combine_gifs(gif_path, output_path, matrix=[]):
     # Load gifs
-    gifs = [Image.open(gif_path) for gif_path in gif_paths]
+    # gifs = [Image.open(gif_path) for gif_path in gif_paths]
     
     # Get gif iterator
     # frames_list = [list(ImageSequence.Iterator(gif)) for gif in gifs]
-    frames_list = [[frame.copy() for frame in ImageSequence.Iterator(gif)] for gif in gifs]
-
+    # frames_list = [[frame.copy() for frame in ImageSequence.Iterator(gif)] for gif in gifs]
     # get frame count
-    frame_count = min([len(frames) for frames in frames_list])
+    # frame_count = min([len(frames) for frames in frames_list])
+
+
+    gif = Image.open(gif_path)
+    src_frame = [frame.copy() for frame in ImageSequence.Iterator(gif)]
+    frame_count = len(src_frame)
+
+    # src_frame[0].save(output_path, 
+    #                         save_all=True, 
+    #                         append_images=src_frame[1:], 
+    #                         optimize=False,
+    #                         duration=gif.info['duration'], 
+    #                         loop=gif.info['loop'])
+
+
     combined_frames = []
     for frame_idx in range(frame_count):
         # Calc new width and height frame
-        combined_width = gifs[0].width * matrix[0]
-        combined_height = gifs[0].height * matrix[1]
+        combined_width = gif.width * matrix[0]
+        combined_height = gif.height * matrix[1]
         combined_frame = Image.new('RGBA', (combined_width, combined_height))
 
         # Combine frames in to bigger one
@@ -34,8 +47,8 @@ def combine_gifs(gif_paths, output_path, matrix=[]):
         for i in range(cnt):
             for w in range(matrix[0]):
                 for h in range(matrix[1]):
-                    combined_frame.paste(frames_list[i][frame_idx], 
-                                            (gifs[0].width*w, gifs[0].height*h))
+                    combined_frame.paste(src_frame[frame_idx], 
+                                            (gif.width*w, gif.height*h))
         combined_frames.append(combined_frame)
 
     # Save
@@ -43,8 +56,8 @@ def combine_gifs(gif_paths, output_path, matrix=[]):
                             save_all=True, 
                             append_images=combined_frames[1:], 
                             optimize=False,
-                            duration=gifs[0].info['duration'], 
-                            loop=gifs[0].info['loop'])
+                            duration=gif.info['duration'], 
+                            loop=gif.info['loop'])
 
 
 def convert_gif(src, tar, range_list, flip=False):
@@ -89,20 +102,11 @@ def crop_gif(src, tar):
 
 
 def main():
-    # tmp_file = f'{PHOTO_TMP_PATH}/tmp.gif'
-    # tmp_crop_file = f'{PHOTO_TMP_PATH}/tmp_crop.gif'
-    # convert_gif(PHOTO_SRC1_PATH, tmp_file, (0, 360, 10))
-    # crop_gif(tmp_file, tmp_crop_file)
-
-    gif_paths = []
-    for i in range(9):
-        tmp_file = f'{PHOTO_TMP_PATH}/{i}_tmp.gif'
-        tmp_crop_file = f'{PHOTO_TMP_PATH}/{i}_tmp_crop.gif'
-        convert_gif(PHOTO_SRC1_PATH, tmp_file, (0, 360, 10))
-        crop_gif(tmp_file, tmp_crop_file)
-        gif_paths.append(tmp_crop_file)
-
-    combine_gifs(gif_paths, PHOTO_OUT_PATH, matrix=[3, 3])
+    tmp_file = f'{PHOTO_TMP_PATH}/tmp.gif'
+    tmp_crop_file = f'{PHOTO_TMP_PATH}/tmp_crop.gif'
+    convert_gif(PHOTO_SRC1_PATH, tmp_file, (0, 360, 10))
+    crop_gif(tmp_file, tmp_crop_file)
+    combine_gifs(tmp_crop_file, PHOTO_OUT_PATH, matrix=[128, 128])
 
 if __name__ == '__main__':
     main()
