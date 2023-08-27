@@ -2,57 +2,43 @@ from PIL import Image, ImageSequence
 from copy import deepcopy
 
 BASE_PATH = './data/'
-PHOTO_SRC_PATH = BASE_PATH + 'pic.jpg'
-PHOTO_TARGET_1_PATH = BASE_PATH + 'pic_1.gif'
-PHOTO_TARGET_2_PATH = BASE_PATH + 'pic_2.gif'
-PHOTO_TARGET_3_PATH = BASE_PATH + 'pic_3.gif'
-PHOTO_TARGET_4_PATH = BASE_PATH + 'pic_4.gif'
+PHOTO_SRC1_PATH = BASE_PATH + 'pic1.jpg'
+PHOTO_SRC2_PATH = BASE_PATH + 'pic2.jpg'
+PHOTO_TMP_PATH = BASE_PATH + 'tmp'
+PHOTO_OUT_PATH = BASE_PATH + 'out.gif'
 
-PHOTO_CROP_1_TARGET_PATH = BASE_PATH + 'pic_crop1.gif'
-PHOTO_CROP_2_TARGET_PATH = BASE_PATH + 'pic_crop2.gif'
-PHOTO_CROP_3_TARGET_PATH = BASE_PATH + 'pic_crop3.gif'
-PHOTO_CROP_4_TARGET_PATH = BASE_PATH + 'pic_crop4.gif'
-
-PHOTO_MATRIX_PATH = BASE_PATH + 'pic_matrix.gif'
-
-PHOTO_OTHER_PATH = BASE_PATH + 'other'
-
-RATIO = 3
-CROP_SIZE = 170 // RATIO
-# ROTATE_OFFSET = 110
+RATIO = 20
+CROP_SIZE = 10 // RATIO
 ROTATE_OFFSET = 0
 
 
-def combine_gifs(gif_paths, output_path):
-    # 載入所有 GIFs
+def combine_gifs(gif_paths, output_path, matrix=[]):
+    # Load gifs
     gifs = [Image.open(gif_path) for gif_path in gif_paths]
     
-    # 取得每個 GIF 的幀列表
+    # Get gif iterator
     # frames_list = [list(ImageSequence.Iterator(gif)) for gif in gifs]
     frames_list = [[frame.copy() for frame in ImageSequence.Iterator(gif)] for gif in gifs]
 
-    # 確保所有 GIF 的幀數是一樣的（簡化示例，真實情況可能需要更多的處理）
+    # get frame count
     frame_count = min([len(frames) for frames in frames_list])
     combined_frames = []
-
-
     for frame_idx in range(frame_count):
-        # 創建一個新的幀來放置 2x2 矩陣中的幀
-        combined_width = gifs[0].width + gifs[1].width
-        combined_height = gifs[0].height + gifs[2].height
+        # Calc new width and height frame
+        combined_width = gifs[0].width * matrix[0]
+        combined_height = gifs[0].height * matrix[1]
         combined_frame = Image.new('RGBA', (combined_width, combined_height))
 
-        # 將每個 GIF 的當前幀放到正確的位置
-        combined_frame.paste(frames_list[0][frame_idx], (0, 0))
-        combined_frame.paste(frames_list[1][frame_idx], (gifs[0].width, 0))
-        combined_frame.paste(frames_list[2][frame_idx], (0, gifs[0].height))
-        combined_frame.paste(frames_list[3][frame_idx], (gifs[1].width, gifs[2].height))
-
+        # Combine frames in to bigger one
+        cnt = matrix[0] * matrix[1]
+        for i in range(cnt):
+            for w in range(matrix[0]):
+                for h in range(matrix[1]):
+                    combined_frame.paste(frames_list[i][frame_idx], 
+                                            (gifs[0].width*w, gifs[0].height*h))
         combined_frames.append(combined_frame)
 
-        # combined_frame.save(f"{PHOTO_OTHER_PATH}/frame_{frame_idx}.png")
-
-    # 儲存組合後的 GIF
+    # Save
     combined_frames[0].save(output_path, 
                             save_all=True, 
                             append_images=combined_frames[1:], 
@@ -103,24 +89,20 @@ def crop_gif(src, tar):
 
 
 def main():
-    convert_gif(PHOTO_SRC_PATH, PHOTO_TARGET_4_PATH, (0, 360, 10))
-    crop_gif(PHOTO_TARGET_4_PATH, PHOTO_CROP_4_TARGET_PATH)
+    # tmp_file = f'{PHOTO_TMP_PATH}/tmp.gif'
+    # tmp_crop_file = f'{PHOTO_TMP_PATH}/tmp_crop.gif'
+    # convert_gif(PHOTO_SRC1_PATH, tmp_file, (0, 360, 10))
+    # crop_gif(tmp_file, tmp_crop_file)
 
-    convert_gif(PHOTO_SRC_PATH, PHOTO_TARGET_3_PATH, (360, 0, -10), True)
-    crop_gif(PHOTO_TARGET_3_PATH, PHOTO_CROP_3_TARGET_PATH)
+    gif_paths = []
+    for i in range(9):
+        tmp_file = f'{PHOTO_TMP_PATH}/{i}_tmp.gif'
+        tmp_crop_file = f'{PHOTO_TMP_PATH}/{i}_tmp_crop.gif'
+        convert_gif(PHOTO_SRC1_PATH, tmp_file, (0, 360, 10))
+        crop_gif(tmp_file, tmp_crop_file)
+        gif_paths.append(tmp_crop_file)
 
-    convert_gif(PHOTO_SRC_PATH, PHOTO_TARGET_1_PATH, (360, 0, -10), True)
-    crop_gif(PHOTO_TARGET_1_PATH, PHOTO_CROP_1_TARGET_PATH)
-
-    convert_gif(PHOTO_SRC_PATH, PHOTO_TARGET_2_PATH, (0, 360, 10))
-    crop_gif(PHOTO_TARGET_2_PATH, PHOTO_CROP_2_TARGET_PATH)
-
-    # Create Matrix
-    gif_paths = [PHOTO_CROP_1_TARGET_PATH, PHOTO_CROP_2_TARGET_PATH,
-                    PHOTO_CROP_3_TARGET_PATH, PHOTO_CROP_4_TARGET_PATH]
-    combine_gifs(gif_paths, PHOTO_MATRIX_PATH)
-
-
+    combine_gifs(gif_paths, PHOTO_OUT_PATH, matrix=[3, 3])
 
 if __name__ == '__main__':
     main()
