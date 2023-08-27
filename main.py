@@ -61,36 +61,6 @@ def combine_gifs(gif_paths, output_path):
                             loop=gifs[0].info['loop'])
 
 
-
-# def flip(src, tar, mode):
-#     # Mode: Image.FLIP_LEFT_RIGHT, Image.FLIP_TOP_BOTTOM
-#     with Image.open(src) as im:
-#         frames = []
-#         for frame in ImageSequence.Iterator(im):
-#             flipped_frame = frame.transpose(mode)
-#             frames.append(flipped_frame)
-
-#         frames[0].save(tar, 
-#                         save_all=True, 
-#                         append_images=frames[1:], 
-#                         duration=im.info['duration'], 
-#                         loop=im.info['loop'])
-
-# def rotate(src, tar, degree):
-#     # Mode: Image.FLIP_LEFT_RIGHT, Image.FLIP_TOP_BOTTOM
-#     with Image.open(src) as im:
-#         frames = []
-#         for frame in ImageSequence.Iterator(im):
-#             flipped_frame = frame.rotate(degree)
-#             frames.append(flipped_frame)
-
-#         frames[0].save(tar, 
-#                         save_all=True, 
-#                         append_images=frames[1:], 
-#                         duration=im.info['duration'], 
-#                         loop=im.info['loop'])
-
-
 def convert_gif(src, tar, range_list, flip=False):
     with Image.open(src) as img_org:
         img = deepcopy(img_org)
@@ -133,8 +103,6 @@ def crop_gif(src, tar):
 
 
 def main():
-
-    
     convert_gif(PHOTO_SRC_PATH, PHOTO_TARGET_4_PATH, (0, 360, 10))
     crop_gif(PHOTO_TARGET_4_PATH, PHOTO_CROP_4_TARGET_PATH)
 
@@ -147,204 +115,11 @@ def main():
     convert_gif(PHOTO_SRC_PATH, PHOTO_TARGET_2_PATH, (0, 360, 10))
     crop_gif(PHOTO_TARGET_2_PATH, PHOTO_CROP_2_TARGET_PATH)
 
-    # Convert GIF 4
-    # with Image.open(PHOTO_SRC_PATH) as img_org:
-    #     img = deepcopy(img_org)
-    #     w, h = img.size
-
-    #     # Resize
-    #     img_size = min([w, h])
-    #     img = img.crop((0, 0, img_size, img_size))
-    #     img = img.resize((w//RATIO, h//RATIO), Image.LANCZOS)
-    #     w, h = img.size
-
-    #     frames = []
-    #     for i in range(0, 360, 10):
-    #         rotated_image = img.rotate(i)
-    #         frames.append(rotated_image)
-
-    #     # Save to GIF
-    #     frames[0].save(PHOTO_TARGET_4_PATH, 
-    #                     save_all=True, 
-    #                     append_images=frames[1:], 
-    #                     duration=100,
-    #                     loop=0)
-
-    # # Crop 4
-    # with Image.open(PHOTO_TARGET_4_PATH) as img:
-    #     w, h = img.size
-    #     frames = []
-    #     for frame in ImageSequence.Iterator(img):
-    #         cropped_frame = frame.crop((CROP_SIZE, CROP_SIZE, w-CROP_SIZE, h-CROP_SIZE))
-    #         frames.append(cropped_frame)
-
-    #     frames[0].save(PHOTO_CROP_4_TARGET_PATH, 
-    #                     save_all=True, 
-    #                     append_images=frames[1:], 
-    #                     duration=img.info['duration'], 
-    #                     loop=img.info['loop'])
-
-
-    # # Convert GIF 3
-    # with Image.open(PHOTO_SRC_PATH) as img_org:
-    #     img = deepcopy(img_org)
-    #     w, h = img.size
-
-    #     # Resize
-    #     img_size = min([w, h])
-    #     img = img.crop((0, 0, img_size, img_size))
-    #     img = img.resize((w//RATIO, h//RATIO), Image.LANCZOS)
-    #     img = img.transpose(Image.FLIP_LEFT_RIGHT)
-    #     w, h = img.size
-
-    #     frames = []
-    #     for i in range(360, 0, -10):
-    #         rotated_image = img.rotate(i)
-    #         frames.append(rotated_image)
-
-    #     # Save to GIF
-    #     frames[0].save(PHOTO_TARGET_3_PATH, 
-    #                     save_all=True, 
-    #                     append_images=frames[1:], 
-    #                     duration=100,
-    #                     loop=0)
-
-    # # Crop 3
-    # with Image.open(PHOTO_TARGET_3_PATH) as img:
-    #     w, h = img.size
-    #     frames = []
-    #     for frame in ImageSequence.Iterator(img):
-    #         cropped_frame = frame.crop((CROP_SIZE, CROP_SIZE, w-CROP_SIZE, h-CROP_SIZE))
-    #         frames.append(cropped_frame)
-
-    #     frames[0].save(PHOTO_CROP_3_TARGET_PATH, 
-    #                     save_all=True, 
-    #                     append_images=frames[1:], 
-    #                     duration=img.info['duration'], 
-    #                     loop=img.info['loop'])
-
-
-    # # Convert GIF 1
-    # with Image.open(PHOTO_SRC_PATH) as img_org:
-    #     img = deepcopy(img_org)
-    #     w, h = img.size
-
-    #     # Resize
-    #     img_size = min([w, h])
-    #     img = img.crop((0, 0, img_size, img_size))
-    #     img = img.resize((w//RATIO, h//RATIO), Image.LANCZOS)
-    #     img = img.transpose(Image.FLIP_LEFT_RIGHT)
-    #     w, h = img.size
-
-    #     frames = []
-    #     for i in range(360, 0, -10):
-    #         rotated_image = img.rotate(i-ROTATE_OFFSET)
-    #         frames.append(rotated_image)
-
-    #     # Save to GIF
-    #     frames[0].save(PHOTO_TARGET_1_PATH, 
-    #                     save_all=True, 
-    #                     append_images=frames[1:], 
-    #                     duration=100,
-    #                     loop=0)
-
-    # # Crop 1
-    # with Image.open(PHOTO_TARGET_1_PATH) as img:
-    #     w, h = img.size
-    #     frames = []
-    #     for frame in ImageSequence.Iterator(img):
-    #         cropped_frame = frame.crop((CROP_SIZE, CROP_SIZE, w-CROP_SIZE, h-CROP_SIZE))
-    #         frames.append(cropped_frame)
-
-    #     frames[0].save(PHOTO_CROP_1_TARGET_PATH, 
-    #                     save_all=True, 
-    #                     append_images=frames[1:], 
-    #                     duration=img.info['duration'], 
-    #                     loop=img.info['loop'])
-
-
-    # # Convert GIF 2
-    # with Image.open(PHOTO_SRC_PATH) as img_org:
-    #     img = deepcopy(img_org)
-    #     w, h = img.size
-
-    #     # Resize
-    #     img_size = min([w, h])
-    #     img = img.crop((0, 0, img_size, img_size))
-    #     img = img.resize((w//RATIO, h//RATIO), Image.LANCZOS)
-    #     w, h = img.size
-
-    #     frames = []
-    #     for i in range(0, 360, 10):
-    #         rotated_image = img.rotate(i+ROTATE_OFFSET)
-    #         frames.append(rotated_image)
-
-    #     # Save to GIF
-    #     frames[0].save(PHOTO_TARGET_2_PATH, 
-    #                     save_all=True, 
-    #                     append_images=frames[1:], 
-    #                     duration=100,
-    #                     loop=0)
-
-    # # Crop 2
-    # with Image.open(PHOTO_TARGET_2_PATH) as img:
-    #     w, h = img.size
-    #     frames = []
-    #     for frame in ImageSequence.Iterator(img):
-    #         cropped_frame = frame.crop((CROP_SIZE, CROP_SIZE, w-CROP_SIZE, h-CROP_SIZE))
-    #         frames.append(cropped_frame)
-
-    #     frames[0].save(PHOTO_CROP_2_TARGET_PATH, 
-    #                     save_all=True, 
-    #                     append_images=frames[1:], 
-    #                     duration=img.info['duration'], 
-    #                     loop=img.info['loop'])
-
-
-
-
-    # flip(PHOTO_CROP_4_TARGET_PATH, PHOTO_CROP_3_TARGET_PATH, Image.FLIP_LEFT_RIGHT)
-    # rotate(PHOTO_CROP_4_TARGET_PATH, PHOTO_CROP_2_TARGET_PATH, 45)
-    # rotate(PHOTO_CROP_3_TARGET_PATH, PHOTO_CROP_1_TARGET_PATH, 45)
-
-    # flip(PHOTO_CROP_4_TARGET_PATH, PHOTO_CROP_2_TARGET_PATH, Image.FLIP_TOP_BOTTOM)
-    # flip(PHOTO_CROP_2_TARGET_PATH, PHOTO_CROP_1_TARGET_PATH, Image.FLIP_LEFT_RIGHT)
-
-
     # Create Matrix
     gif_paths = [PHOTO_CROP_1_TARGET_PATH, PHOTO_CROP_2_TARGET_PATH,
                     PHOTO_CROP_3_TARGET_PATH, PHOTO_CROP_4_TARGET_PATH]
-
-    # gif_paths = [PHOTO_TARGET_1_PATH, PHOTO_TARGET_2_PATH,
-    #                 PHOTO_TARGET_3_PATH, PHOTO_TARGET_4_PATH]
     combine_gifs(gif_paths, PHOTO_MATRIX_PATH)
 
-
-    # # Horizontal Flip
-    # with Image.open(PHOTO_CROP_4_TARGET_PATH) as im:
-    #     frames = []
-    #     for frame in ImageSequence.Iterator(im):
-    #         flipped_frame = frame.transpose(Image.FLIP_LEFT_RIGHT)
-    #         frames.append(flipped_frame)
-
-    #     frames[0].save(PHOTO_CROP_3_TARGET_PATH, 
-    #                     save_all=True, 
-    #                     append_images=frames[1:], 
-    #                     duration=im.info['duration'], 
-    #                     loop=im.info['loop'])
-
-    # # Vertical Flip
-    # with Image.open(PHOTO_CROP_4_TARGET_PATH) as im:
-    #     frames = []
-    #     for frame in ImageSequence.Iterator(im):
-    #         flipped_frame = frame.transpose(Image.FLIP_TOP_BOTTOM)
-    #         frames.append(flipped_frame)
-
-    #     frames[0].save(PHOTO_CROP_2_TARGET_PATH, 
-    #                     save_all=True, 
-    #                     append_images=frames[1:], 
-    #                     duration=im.info['duration'], 
-    #                     loop=im.info['loop'])
 
 
 if __name__ == '__main__':
